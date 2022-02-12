@@ -78,7 +78,7 @@ minimum-gas-prices = ""
 Your full node has been initialized!
 
 #### Run a full node.  The following sets up the knstld binary as a systemd service.  Testnet instructions utilized screen.  Using screen in this way however, will not provide essential production functions such as log rotation and management.
-
+#### Please note, if running the daemon as the root user, the ExecStart path will need to be altered to remove the "/home/".  I.E ExecStart=/root/go/bin/knstld start.
 ```
 cat <<EOF >> knstld.service
 [Unit]
