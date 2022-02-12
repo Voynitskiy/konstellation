@@ -79,14 +79,29 @@ Your full node has been initialized!
 
 #### Run a full node
 ```
-# Start Konstellation
-build/knstld start
+cat <<EOF >> knstld.service
+[Unit]
+Description=Konstellation daemon
+After=network-online.target
 
-# to run process in background run
-screen -dmSL knstld build/knstld start
+[Service]
+User=$USER
+ExecStart=/home/$USER/go/bin/knstld start
+Restart=on-failure
+RestartSec=3
+LimitNOFILE=4096
 
-# Check your node's status with konstellation cli
-build/knstld status
+[Install]
+WantedBy=multi-user.target
+EOF
+sudo cp knstld.service /etc/systemd/system/
+sudo daemon-reload
+sudo systemctl enable knstld
+sudo systemctl start knstld
+# check logs to make sure the Konstellation daemon is running without issues
+journalctl -u knstld -f
+# stop the log output with CTRL and C
+
 ```
 
 Wait for the konstellation block synchroniztion complete
@@ -143,7 +158,7 @@ knstld query bank balances <key address>
 ```
 
 For test nodes, `chain-id` is `darchub`.\
-You need transction fee `2udarc` to make your transaction for creating validator.\
+You need transction fee `10000udarc` to make your transaction for creating validator.\
 Don't use more `udarc` than you have! 
 
 ```bash
@@ -176,24 +191,24 @@ build/knstld query staking validators --chain-id=<chain_id>
 ## How to init chain
 
 Add key to your keyring
-```build/knstld keys add <key name>```
+```knstld keys add <key name>```
 
 Initialize genesis and config files.
-```build/knstld init <moniker> --chain-id <chain id>```
+```knstld init <moniker> --chain-id <chain id>```
 
 Replace all denoms `stake` to `udarc` in `genesis.json`
 
 Add genesis account
-```build/knstld add-genesis-account <key name> 200000000000udarc``` - 200000darc
+```knstld add-genesis-account <key name> 200000000000udarc``` - 200000darc
 
 Create genesis transaction
-```build/knstld gentx <key name> 100000000000udarc --chain-id <chain id>``` - create CreateValidator transaction
+```knstld gentx <key name> 100000000000udarc --chain-id <chain id>``` - create CreateValidator transaction
 
 Collect all of gentxs
-```build/knstld collect-gentxs```
+```knstld collect-gentxs```
 
 Run network
-```build/knstld start```
+```knstld start```
 
 ## Dockerized
 
