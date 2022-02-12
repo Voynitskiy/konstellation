@@ -15,25 +15,29 @@ This assumes that you're running Linux or MacOS and have installed [Go 1.17+](ht
 
 Build, Install, and Name your Node
 
-Current latest release is `v0.4.3`
+Current latest mainnet release is `v0.5.0`
 ```bash
 # Clone Konstellation from the latest release found here: https://github.com/konstellation/konstellation/releases
 git clone -b <latest_release> https://github.com/konstellation/konstellation
 # Enter the folder Konstellation was cloned into
 cd konstellation
-# Change git release branch `v0.4.3`
-git checkout v0.4.3
+# Change git release branch `v0.5.0`
+git checkout v0.5.0
 # Compile and install Konstellation
 make build
 # Check konstellation version
 build/knstld version
 ```
-
+```
+#copy to home go folder
+mkdir ~/go/bin
+cp build/knstld ~/go/bin/
+```
 ### To join mainnet follow this steps
 
 #### Initialize data and folders
 ```bash
-build/knstld unsafe-reset-all
+knstld unsafe-reset-all
 ```
 
 #### Genesis & Seeds
@@ -90,12 +94,12 @@ Wait for the konstellation block synchroniztion complete
 ### Create a key
 Add new
 ``` bash
-build/knstld keys add <key_name>
+knstld keys add <key_name>
 ```
 
 Or import via mnemonic
 ```bash
-build/knstld keys add <key_name> -i
+knstld keys add <key_name> -i
 ```
 
 As a result, you got
@@ -127,7 +131,7 @@ Please read about [Sentry Node Architecture](https://hub.cosmos.network/main/val
 Your `darcvalconspub` can be used to create a new validator by staking tokens. You can find your validator pubkey by running:
 
 ```bash
-build/knstld tendermint show-validator
+knstld tendermint show-validator
 ```
 
 To create your validator, just use the following command:
@@ -135,7 +139,7 @@ To create your validator, just use the following command:
 Check if your key(address) has enough balance:
 
 ```bash
-build/knstld query bank balances <key address>
+knstld query bank balances <key address>
 ```
 
 For test nodes, `chain-id` is `darchub`.\
@@ -143,7 +147,7 @@ You need transction fee `2udarc` to make your transaction for creating validator
 Don't use more `udarc` than you have! 
 
 ```bash
-build/knstld tx staking create-validator \
+knstld tx staking create-validator \
   --amount=1000000udarc \
   --pubkey=$(build/knstld tendermint show-validator) \
   --moniker=<choose a moniker> \
@@ -153,7 +157,7 @@ build/knstld tx staking create-validator \
   --commission-max-change-rate="0.01" \
   --min-self-delegation="1" \
   --from=<key_name> \
-  --fees=2udarc
+  --fees=10000udarc
 ```
 
 * NOTE: If you have troubles with \'\\\' symbol, run the command in a single line like `build/knstld tx staking create-validator --amount=1000000udarc --pubkey=$(build/knstld tendermint show-validator) ...`
