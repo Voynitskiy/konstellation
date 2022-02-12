@@ -96,7 +96,7 @@ LimitNOFILE=4096
 WantedBy=multi-user.target
 EOF
 sudo cp knstld.service /etc/systemd/system/
-sudo daemon-reload
+sudo systemctl daemon-reload
 sudo systemctl enable knstld
 sudo systemctl start knstld
 # check logs to make sure the Konstellation daemon is running without issues
