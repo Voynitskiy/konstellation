@@ -79,6 +79,7 @@ Your full node has been initialized!
 
 #### Run a full node.  The following sets up the knstld binary as a systemd service.  Testnet instructions utilized screen.  Using screen in this way however, will not provide essential production functions such as log rotation and management.
 #### Please note, if running the daemon as the root user, the ExecStart path will need to be altered to remove the "/home/".  I.E ExecStart=/root/go/bin/knstld start.
+#### Also understand you WILL need to use a snapshot and cannot sync without one when beginning from binary version v0.5.0
 ```
 cat <<EOF >> knstld.service
 [Unit]
@@ -98,10 +99,19 @@ EOF
 sudo cp knstld.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable knstld
+cd ~/.knstld/
+rm -rf data
+mkdir data
+SNAP_NAME=$(curl -s https://mercury-nodes.net/knstl-snapshot/ | egrep -o ">knstl.*tar.lz4" | tail -1 | tr -d ">");
+wget https://mercury-nodes.net/knstl-snapshot/$SNAP_NAME
+sudo apt install liblz4-tool
+lz4 -c -d $SNAP_NAME | tar xv -C data
 sudo systemctl start knstld
 # check logs to make sure the Konstellation daemon is running without issues
 journalctl -u knstld -f
-# stop the log output with CTRL and C
+# stop the log output with CTRL and C.  Don't forget to remove the snapshot file after finishing with it.
+rm $SNAP_NAME
+cd ~/
 
 ```
 
